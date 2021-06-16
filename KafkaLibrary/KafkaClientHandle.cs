@@ -2,9 +2,9 @@ using System;
 using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
 
-namespace Gateway.Producer
+namespace KafkaLibrary
 {
-    public class KafkaClientHandle: IDisposable
+    public class KafkaClientHandle : IDisposable
     {
         private readonly IProducer<byte[], byte[]> _kafkaProducer;
 

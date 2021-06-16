@@ -2,14 +2,13 @@ using System;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 
-namespace Gateway.Producer
+namespace KafkaLibrary
 {
-    public class KafkaDependentProducer<TK, TV> where TV : class
+    public class KafkaProducer<TK, TV> where TV : class
     {
-        
         private readonly IProducer<TK, TV> _kafkaHandle;
 
-        public KafkaDependentProducer(KafkaClientHandle handle)
+        public KafkaProducer(KafkaClientHandle handle)
         {
             _kafkaHandle = new DependentProducerBuilder<TK, TV>(handle.Handle)
                 .SetValueSerializer(new JsonSerializer<TV>())

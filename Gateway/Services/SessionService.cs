@@ -1,19 +1,18 @@
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Gateway.Dtos;
-using Gateway.Producer;
+using KafkaLibrary;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace Gateway.Services
 {
     public class SessionService
     {
         private readonly string _sessionTopic;
-        private readonly KafkaDependentProducer<Null, ConnectRequestDto> _kafka;
+        private readonly KafkaProducer<Null, ConnectRequestDto> _kafka;
 
         public SessionService(
-            KafkaDependentProducer<Null, ConnectRequestDto> kafka,
+            KafkaProducer<Null, ConnectRequestDto> kafka,
             IConfiguration config)
         {
             _kafka = kafka;

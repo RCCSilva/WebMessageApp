@@ -6,21 +6,22 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Gateway.Consumer
+namespace KafkaLibrary
 {
-    public class SessionKafkaConsumer<TV> : BackgroundService
+    public abstract class KafkaConsumer<TV> : BackgroundService
     {
-        private readonly string _topic;
-        private readonly ILogger<SessionKafkaConsumer<TV>> _logger;
+        protected abstract string Topic { get; set; }
+        protected abstract void Handler(TV data);
+
+        private readonly ILogger<KafkaConsumer<TV>> _logger;
         private readonly IConsumer<Null, TV> _kafkaConsumer;
 
-        public SessionKafkaConsumer(IConfiguration config, ILogger<SessionKafkaConsumer<TV>> logger)
+        protected KafkaConsumer(IConfiguration config, ILogger<KafkaConsumer<TV>> logger)
         {
             _logger = logger;
             var consumerConfig = new ConsumerConfig();
             config.GetSection("Kafka:ConsumerSettings").Bind(consumerConfig);
 
-            _topic = config.GetValue<string>("Kafka:SessionCreateTopic");
             _kafkaConsumer = new ConsumerBuilder<Null, TV>(consumerConfig)
                 .SetValueDeserializer(new AppJsonDeserializer<TV>())
                 .Build();
@@ -35,7 +36,7 @@ namespace Gateway.Consumer
 
         private void StartConsumerLoop(CancellationToken cancellationToken)
         {
-            _kafkaConsumer.Subscribe(_topic);
+            _kafkaConsumer.Subscribe(Topic);
 
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -45,6 +46,7 @@ namespace Gateway.Consumer
 
                     // Handle message...
                     _logger.LogInformation($"{cr.Message.Key}: {cr.Message.Value}");
+                    Handler(cr.Message.Value);
                 }
                 catch (OperationCanceledException)
                 {

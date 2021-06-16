@@ -1,20 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Confluent.Kafka;
-using Gateway.Consumer;
+using Gateway.Consumers;
 using Gateway.Dtos;
-using Gateway.Producer;
 using Gateway.Services;
+using KafkaLibrary;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 namespace Gateway
@@ -26,17 +19,16 @@ namespace Gateway
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<KafkaClientHandle>();
-            services.AddSingleton<KafkaDependentProducer<Null, ConnectRequestDto>>();
+            services.AddScoped<KafkaProducer<Null, ConnectRequestDto>>();
 
             services.AddScoped<SessionService>();
-
-            services.AddHostedService<SessionKafkaConsumer<ConnectRequestDto>>();
+            services.AddHostedService<SessionReplyConsumer>();
 
             services.AddControllers();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Gateway", Version = "v1"}); });

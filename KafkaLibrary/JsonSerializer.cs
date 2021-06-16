@@ -2,7 +2,7 @@ using System.Text;
 using Confluent.Kafka;
 using Newtonsoft.Json;
 
-namespace Gateway.Producer
+namespace KafkaLibrary
 {
     public class JsonSerializer<TV> : ISerializer<TV>
     {

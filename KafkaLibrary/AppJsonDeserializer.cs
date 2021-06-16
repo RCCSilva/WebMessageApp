@@ -3,7 +3,7 @@ using System.Text;
 using Confluent.Kafka;
 using Newtonsoft.Json;
 
-namespace Gateway.Consumer
+namespace KafkaLibrary
 {
     public class AppJsonDeserializer<TV>: IDeserializer<TV>
     {

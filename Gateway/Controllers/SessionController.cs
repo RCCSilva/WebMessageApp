@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Confluent.Kafka;
-using Confluent.SchemaRegistry.Serdes;
-using Gateway.Dtos;
-using Gateway.Producer;
+﻿using System.Threading.Tasks;
 using Gateway.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace Gateway.Controllers
