@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.SchemaRegistry.Serdes;
+using Gateway.Dtos;
 using Gateway.Producer;
+using Gateway.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -16,22 +18,18 @@ namespace Gateway.Controllers
     public class SessionController : ControllerBase
     {
         private readonly ILogger<SessionController> _logger;
-        private readonly KafkaDependentProducer<Null, string> _kafkaDependentProducer;
+        private readonly SessionService _sessionService;
 
-        public SessionController(KafkaDependentProducer<Null, string> kafkaDependentProducer,
-            ILogger<SessionController> logger)
+        public SessionController(ILogger<SessionController> logger, SessionService sessionService)
         {
-            _kafkaDependentProducer = kafkaDependentProducer;
+            _sessionService = sessionService;
             _logger = logger;
         }
 
         [HttpPost("/connect")]
         public async Task Connect()
         {
-            _logger.LogDebug("Received request to connect");
-            var message = new Message<Null, string> {Value = "I want to connect!!!"};
-            await _kafkaDependentProducer.ProduceAsync("test", message);
-            _logger.LogDebug("Message to connect sent");
+            await _sessionService.SendConnection("Rafael");
         }
     }
 }

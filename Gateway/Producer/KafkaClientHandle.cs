@@ -12,10 +12,10 @@ namespace Gateway.Producer
         {
             var conf = new ProducerConfig();
             config.GetSection("Kafka:ProducerSettings").Bind(conf);
-            this._kafkaProducer = new ProducerBuilder<byte[], byte[]>(conf).Build();
+            _kafkaProducer = new ProducerBuilder<byte[], byte[]>(conf).Build();
         }
 
-        public Handle Handle => this._kafkaProducer.Handle;
+        public Handle Handle => _kafkaProducer.Handle;
 
         public void Dispose()
         {

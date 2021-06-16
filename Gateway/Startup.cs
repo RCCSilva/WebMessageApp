@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using Gateway.Consumer;
 using Gateway.Dtos;
 using Gateway.Producer;
+using Gateway.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,6 +33,10 @@ namespace Gateway
         {
             services.AddSingleton<KafkaClientHandle>();
             services.AddSingleton<KafkaDependentProducer<Null, ConnectRequestDto>>();
+
+            services.AddScoped<SessionService>();
+
+            services.AddHostedService<SessionKafkaConsumer<ConnectRequestDto>>();
 
             services.AddControllers();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Gateway", Version = "v1"}); });

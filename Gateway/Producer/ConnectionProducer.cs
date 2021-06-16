@@ -1,10 +1,6 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using Confluent.Kafka.SyncOverAsync;
-using Confluent.SchemaRegistry;
-using Confluent.SchemaRegistry.Serdes;
 
 namespace Gateway.Producer
 {
@@ -16,7 +12,7 @@ namespace Gateway.Producer
         public KafkaDependentProducer(KafkaClientHandle handle)
         {
             _kafkaHandle = new DependentProducerBuilder<TK, TV>(handle.Handle)
-                .SetValueSerializer(new JsonSerializer<TV>(new SchemaRegistryConfig()).AsSyncOverAsync())
+                .SetValueSerializer(new JsonSerializer<TV>())
                 .Build();
         }
 
