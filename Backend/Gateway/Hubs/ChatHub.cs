@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using Gateway.Dto;
 using Gateway.Services;
+using KafkaLibrary.Dto;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
@@ -11,15 +11,15 @@ namespace Gateway.Hubs
         private readonly SessionService _sessionService;
         private readonly MessageService _messageService;
         private readonly ILogger<ChatHub> _logger;
-        private readonly UserDictService _userDictService;
+        private readonly UserConnectionService _userConnectionService;
 
         public ChatHub(
             ILogger<ChatHub> logger,
             SessionService sessionService, 
             MessageService messageService,
-            UserDictService userDictService)
+            UserConnectionService userConnectionService)
         {
-            _userDictService = userDictService;
+            _userConnectionService = userConnectionService;
             _logger = logger;
             _sessionService = sessionService;
             _messageService = messageService;
@@ -27,7 +27,7 @@ namespace Gateway.Hubs
 
         public void Connect(string username)
         {
-            var connectRequestDto= new ConnectionRequest
+            var connectRequestDto= new SessionCreate
             {
                 Name = username
             };
@@ -38,7 +38,7 @@ namespace Gateway.Hubs
         {
             _logger.LogDebug($"Received message from \"{Context.ConnectionId}\": {message.Message}");
             
-            _userDictService.AddUser(message.FromUser, Context.ConnectionId);
+            _userConnectionService.AddUser(message.FromUser, Context.ConnectionId);
             await _messageService.SendMessage(message);
         }
     }

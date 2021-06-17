@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 namespace Gateway.Services
 {
-    public class UserDictService
+    public class UserConnectionService
     {
         private readonly IDictionary<string, string> _dictionary;
         
-        public UserDictService()
+        public UserConnectionService()
         {
             _dictionary = new Dictionary<string, string>();
         }

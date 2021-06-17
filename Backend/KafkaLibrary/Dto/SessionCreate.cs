@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
 
-namespace Gateway.Dto
+namespace KafkaLibrary.Dto
 {
-    public class ConnectionRequest
+    public class SessionCreate
     {
         [JsonProperty("name")]
         public string Name { get; set; }

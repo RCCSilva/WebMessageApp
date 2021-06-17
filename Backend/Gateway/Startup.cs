@@ -1,9 +1,9 @@
 using Confluent.Kafka;
 using Gateway.Consumers;
-using Gateway.Dto;
 using Gateway.Hubs;
 using Gateway.Services;
 using KafkaLibrary;
+using KafkaLibrary.Dto;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -36,12 +36,15 @@ namespace Gateway
                 });
             });
 
+            services.AddSingleton<GuidService>();
+            
             services.AddSingleton<KafkaClientHandle>();
-            services.AddSingleton<UserDictService>();
+            services.AddSingleton<UserConnectionService>();
+            
 
             services.AddSingleton<ReceiveMessageService>();
-            
-            services.AddScoped<KafkaProducer<Null, ConnectionRequest>>();
+
+            services.AddScoped<KafkaProducer<Null, SessionCreate>>();
             services.AddScoped<KafkaProducer<Null, ChatMessage>>();
 
             services.AddScoped<SessionService>();
@@ -66,7 +69,6 @@ namespace Gateway
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Gateway v1"));
                 app.UseCors("ClientPermission");
-
             }
 
             app.UseHttpsRedirection();

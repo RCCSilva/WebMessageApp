@@ -1,6 +1,4 @@
-using Newtonsoft.Json;
-
-namespace Gateway.Dto
+namespace KafkaLibrary.Dto
 {
     public class ChatMessage
     {

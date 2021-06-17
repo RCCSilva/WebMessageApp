@@ -1,7 +1,8 @@
+using System.Text;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using Gateway.Dto;
 using KafkaLibrary;
+using KafkaLibrary.Dto;
 using Microsoft.Extensions.Configuration;
 
 namespace Gateway.Services
@@ -9,23 +10,29 @@ namespace Gateway.Services
     public class SessionService
     {
         private readonly string _sessionTopic;
-        private readonly KafkaProducer<Null, ConnectionRequest> _kafka;
+        private readonly KafkaProducer<Null, SessionCreate> _kafka;
+        private readonly GuidService _guidService;
 
         public SessionService(
-            KafkaProducer<Null, ConnectionRequest> kafka,
-            IConfiguration config)
+            KafkaProducer<Null, SessionCreate> kafka,
+            IConfiguration config, GuidService guidService)
         {
             _kafka = kafka;
-            _sessionTopic = config.GetValue<string>("Kafka:SessionCreateTopic");
+            _guidService = guidService;
+            _sessionTopic = config.GetValue<string>("Kafka:SessionCreateTopic:Main");
         }
 
-        public Task SendConnection(ConnectionRequest connectionRequest)
+        public async Task SendConnection(SessionCreate sessionCreate)
         {
-            var message = new Message<Null, ConnectionRequest>
+            var headers = new Headers {{"gateway-id", Encoding.ASCII.GetBytes(_guidService.GatewayId)}};
+
+            var message = new Message<Null, SessionCreate>
             {
-                Value = connectionRequest
+                Headers = headers,
+                Value = sessionCreate
             };
-            return _kafka.ProduceAsync(_sessionTopic, message);
+
+            await _kafka.ProduceAsync(_sessionTopic, message);
         }
     }
 }

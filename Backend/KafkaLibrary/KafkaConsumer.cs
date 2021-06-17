@@ -11,7 +11,7 @@ namespace KafkaLibrary
     public abstract class KafkaConsumer<TV> : BackgroundService
     {
         protected abstract string Topic { get; set; }
-        protected abstract void Handler(TV data);
+        protected abstract void Handler(Message<Null, TV> message);
 
         private readonly ILogger<KafkaConsumer<TV>> _logger;
         private readonly IConsumer<Null, TV> _kafkaConsumer;
@@ -37,6 +37,7 @@ namespace KafkaLibrary
         private void StartConsumerLoop(CancellationToken cancellationToken)
         {
             _kafkaConsumer.Subscribe(Topic);
+            _logger.LogInformation($"Consumer subscribed to '{Topic}'");
 
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -46,7 +47,7 @@ namespace KafkaLibrary
 
                     // Handle message...
                     _logger.LogInformation($"{cr.Message.Key}: {cr.Message.Value}");
-                    Handler(cr.Message.Value);
+                    Handler(cr.Message);
                 }
                 catch (OperationCanceledException)
                 {

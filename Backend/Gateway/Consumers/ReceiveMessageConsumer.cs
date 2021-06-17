@@ -1,6 +1,7 @@
-using Gateway.Dto;
+using Confluent.Kafka;
 using Gateway.Services;
 using KafkaLibrary;
+using KafkaLibrary.Dto;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -16,14 +17,13 @@ namespace Gateway.Consumers
             ReceiveMessageService messageService) : base(config, logger)
         {
             _messageService = messageService;
-            Topic = config.GetValue<string>("Kafka:SendMessageTopic");
+            Topic = config.GetValue<string>("Kafka:ReceiveMessageTopic:Main");
         }
 
         protected override string Topic { get; set; }
-
-        protected override void Handler(ChatMessage data)
+        protected override void Handler(Message<Null, ChatMessage> message)
         {
-            _messageService.ReceiveMessage(data);
+            _messageService.ReceiveMessage(message.Value);
         }
     }
 }

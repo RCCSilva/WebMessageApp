@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Session.Consumers;
+using Session.Services;
 
 namespace Session
 {
@@ -27,6 +29,12 @@ namespace Session
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddSingleton<UserGatewayService>();
+
+            services.AddHostedService<SessionCreateConsumer>();
+            services.AddHostedService<SendMessageConsumer>();
+
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Session", Version = "v1"}); });
         }
 
