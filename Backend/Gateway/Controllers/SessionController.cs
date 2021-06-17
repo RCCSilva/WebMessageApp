@@ -18,10 +18,10 @@ namespace Gateway.Controllers
             _logger = logger;
         }
 
-        [HttpPost("/connect")]
-        public async Task Connect()
-        {
-            await _sessionService.SendConnection("Rafael");
-        }
+        // [HttpPost("/connect")]
+        // public async Task Connect()
+        // {
+        //     await _sessionService.SendConnection("Rafael");
+        // }
     }
 }

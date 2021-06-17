@@ -1,6 +1,7 @@
 using Confluent.Kafka;
 using Gateway.Consumers;
-using Gateway.Dtos;
+using Gateway.Dto;
+using Gateway.Hubs;
 using Gateway.Services;
 using KafkaLibrary;
 using Microsoft.AspNetCore.Builder;
@@ -24,14 +25,36 @@ namespace Gateway
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("ClientPermission", policy =>
+                {
+                    policy.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .WithOrigins("http://localhost:3000")
+                        .AllowCredentials();
+                });
+            });
+
             services.AddSingleton<KafkaClientHandle>();
-            services.AddScoped<KafkaProducer<Null, ConnectRequestDto>>();
+            services.AddSingleton<UserDictService>();
+
+            services.AddSingleton<ReceiveMessageService>();
+            
+            services.AddScoped<KafkaProducer<Null, ConnectionRequest>>();
+            services.AddScoped<KafkaProducer<Null, ChatMessage>>();
 
             services.AddScoped<SessionService>();
+            services.AddScoped<MessageService>();
+
             services.AddHostedService<SessionReplyConsumer>();
+            services.AddHostedService<ReceiveMessageConsumer>();
+            
 
             services.AddControllers();
-            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Gateway", Version = "v1"}); });
+            services.AddSignalR();
+            services.AddSwaggerGen(
+                c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Gateway", Version = "v1"}); });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,15 +65,18 @@ namespace Gateway
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Gateway v1"));
+                app.UseCors("ClientPermission");
+
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
-
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chathub");
+            });
         }
     }
 }

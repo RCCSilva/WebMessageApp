@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
 
-namespace Gateway.Dtos
+namespace Gateway.Dto
 {
-    public class ConnectRequestDto
+    public class ConnectionRequest
     {
         [JsonProperty("name")]
         public string Name { get; set; }
