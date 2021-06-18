@@ -1,25 +1,18 @@
 import type { Message } from "../../App";
+import MessageCard from "../MessageCard";
+import * as S from "./styles";
 
-type MessageListInput = {
-  messages: Array<Message>;
+type Props = {
+  messages: Array<Message>
+  user: string
 };
-
-const MessageList = ({ messages }: MessageListInput) => {
+const MessageList = ({ messages, user }: Props) => {
   return (
-    <div>
-      {messages.map((message) => (
-        <div>
-          <label>
-            Origem:
-            <p>{message.fromUser}</p>
-          </label>
-          <label>
-            Mensagem:
-            <p>{message.message}</p>
-          </label>
-        </div>
+    <S.MessageList>
+      {messages.map((m) => (
+        <MessageCard user={user} origin={m.fromUser} message={m.message} />
       ))}
-    </div>
+    </S.MessageList>
   );
 };
 

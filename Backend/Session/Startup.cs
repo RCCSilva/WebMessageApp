@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Confluent.Kafka;
+using KafkaLibrary;
+using KafkaLibrary.Dto;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,6 +34,10 @@ namespace Session
             services.AddControllers();
 
             services.AddSingleton<UserGatewayService>();
+            services.AddSingleton<KafkaClientHandle>();
+            services.AddSingleton<KafkaProducer<Null, ChatMessage>>();
+
+            services.AddSingleton<MessageService>();
 
             services.AddHostedService<SessionCreateConsumer>();
             services.AddHostedService<SendMessageConsumer>();

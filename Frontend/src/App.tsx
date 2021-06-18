@@ -17,7 +17,7 @@ type Message = {
 
 const App = () => {
   const [connection, setConnection] = useState<HubConnection>();
-  const [user, setUser] = useState<string>();
+  const [user, setUser] = useState<string>('');
   const [messsages, setMessages] = useState<Array<Message>>([]);
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const App = () => {
       toUser: toUser,
       message: message,
     };
-    debugger;
+    setMessages((m) => [...m, chatMessage]);
     sendToWebsocket("SendMessage", chatMessage);
   };
 
@@ -78,7 +78,7 @@ const App = () => {
         <>
           <h1>Olá, {user}!</h1>
           <MessageForm sendMessage={sendMessage} />
-          <MessageList messages={messsages}/>
+          <MessageList user={user} messages={messsages} />
         </>
       ) : (
         <LoginForm sendLogin={sendLogin} />

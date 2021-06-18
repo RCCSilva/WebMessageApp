@@ -8,24 +8,24 @@ using Session.Services;
 
 namespace Session.Consumers
 {
-    public sealed class SendMessageConsumer: KafkaConsumer<ChatMessage>
+    public sealed class SendMessageConsumer : KafkaConsumer<ChatMessage>
     {
-        private readonly UserGatewayService _userGatewayService;
-        
+        private readonly MessageService _messageService;
+
         public SendMessageConsumer(
-            IConfiguration config, 
-            ILogger<KafkaConsumer<ChatMessage>> logger, 
-            UserGatewayService userGatewayService) : base(config, logger)
+            IConfiguration config,
+            ILogger<KafkaConsumer<ChatMessage>> logger,
+            MessageService messageService) : base(config, logger)
         {
-            _userGatewayService = userGatewayService;
+            _messageService = messageService;
             Topic = config.GetValue<string>("Kafka:SendMessageTopic:Main");
         }
 
         protected override string Topic { get; set; }
+
         protected override void Handler(Message<Null, ChatMessage> message)
         {
-            
-            throw new System.NotImplementedException();
+            _messageService.HandleMessage(message);
         }
     }
 }

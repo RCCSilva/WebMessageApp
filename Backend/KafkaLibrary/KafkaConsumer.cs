@@ -45,8 +45,7 @@ namespace KafkaLibrary
                 {
                     var cr = _kafkaConsumer.Consume(cancellationToken);
 
-                    // Handle message...
-                    _logger.LogInformation($"{cr.Message.Key}: {cr.Message.Value}");
+                    _logger.LogInformation($"Received message {cr.Message.Key}: {cr.Message.Value}");
                     Handler(cr.Message);
                 }
                 catch (OperationCanceledException)

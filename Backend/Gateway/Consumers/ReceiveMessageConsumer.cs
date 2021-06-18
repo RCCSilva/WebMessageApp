@@ -14,15 +14,17 @@ namespace Gateway.Consumers
         public ReceiveMessageConsumer(
             IConfiguration config, 
             ILogger<KafkaConsumer<ChatMessage>> logger, 
-            ReceiveMessageService messageService) : base(config, logger)
+            ReceiveMessageService messageService,
+            GuidService guidService) : base(config, logger)
         {
             _messageService = messageService;
-            Topic = config.GetValue<string>("Kafka:ReceiveMessageTopic:Main");
+            Topic = config.GetValue<string>("Kafka:ReceiveMessageTopic:Main") + "_" + guidService.GatewayId;
         }
 
         protected override string Topic { get; set; }
         protected override void Handler(Message<Null, ChatMessage> message)
         {
+            
             _messageService.ReceiveMessage(message.Value);
         }
     }

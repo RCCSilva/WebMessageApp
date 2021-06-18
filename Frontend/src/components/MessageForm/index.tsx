@@ -2,7 +2,7 @@ import { useState } from "react";
 import * as S from "./styles";
 
 type MessageHandler = {
-  sendMessage: (message: string, toUser: string) => any
+  sendMessage: (message: string, toUser: string) => any;
 };
 
 const MessageForm = ({ sendMessage }: MessageHandler) => {
@@ -13,6 +13,7 @@ const MessageForm = ({ sendMessage }: MessageHandler) => {
     event.preventDefault();
 
     sendMessage(toUser, message);
+    setMessage("");
   };
 
   return (
@@ -33,7 +34,7 @@ const MessageForm = ({ sendMessage }: MessageHandler) => {
           onChange={(e) => setMessage(e.target.value)}
         />
       </S.Label>
-      <S.SendMessageButton type="submit" value='Enviar Mensagem'/>
+      <S.SendMessageButton type="submit" value="Enviar Mensagem" />
     </S.Form>
   );
 };
