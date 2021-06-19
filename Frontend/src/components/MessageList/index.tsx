@@ -1,16 +1,16 @@
-import type { Message } from "../../App";
+import type { MessageState } from "../../App";
 import MessageCard from "../MessageCard";
 import * as S from "./styles";
 
 type Props = {
-  messages: Array<Message>
-  user: string
+  messages: Array<MessageState>
 };
-const MessageList = ({ messages, user }: Props) => {
+
+const MessageList = ({ messages }: Props) => {
   return (
     <S.MessageList>
       {messages.map((m) => (
-        <MessageCard user={user} origin={m.fromUser} message={m.message} />
+        <MessageCard message={m} />
       ))}
     </S.MessageList>
   );

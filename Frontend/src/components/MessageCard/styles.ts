@@ -1,27 +1,34 @@
 import styled from "styled-components";
 
 interface Props {
-  isCurrentUser: boolean;
+  isIn: boolean;
 }
 
-export const Card = styled.div<Props>`
-  width: 36rem;
-
+const MessageCard = styled.div`
   display: flex;
-  flex-direction: ${(props) => (props.isCurrentUser ? "row-reverse" : "row")};
+  padding: 0.3rem 3rem 0.3rem 0.3rem;
+  border-radius: 10%;
+  margin-bottom: 3px;
+`
 
-  padding: 1rem 0 1rem 1.5rem;
+export const MessageInCard = styled(MessageCard)`
+  background-color: #ffeede;
+`;
+
+export const MessageOutCard = styled(MessageCard)`
+  background-color: #e9f7df;
 `;
 
 export const Container = styled.div<Props>`
   display: flex;
   flex-direction: column;
-  align-items: ${(props) => (props.isCurrentUser ? "flex-end": "flex-start")};
-
+  align-items: ${(props) => (props.isIn ? "flex-start" : "flex-end")};
 `;
 
 export const Origin = styled.span`
   font-size: 0.7rem;
 `;
 
-export const Message = styled.span``;
+export const Message = styled.span`
+
+`;

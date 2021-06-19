@@ -1,4 +1,3 @@
-import "./App.css";
 import { useEffect, useState } from "react";
 import {
   HubConnection,
@@ -15,10 +14,18 @@ type Message = {
   message: string;
 };
 
+type MessageState = {
+  fromUser: string;
+  toUser: string;
+  message: string;
+  isIn: boolean;
+};
+
 const App = () => {
   const [connection, setConnection] = useState<HubConnection>();
-  const [user, setUser] = useState<string>('');
-  const [messsages, setMessages] = useState<Array<Message>>([]);
+  const [user, setUser] = useState<string>("");
+  const [messsages, setMessages] = useState<Array<MessageState>>([]);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
 
   useEffect(() => {
     if (connection === undefined) {
@@ -32,16 +39,17 @@ const App = () => {
 
   useEffect(() => {
     if (connection) {
-      connection
-        .start()
-        .then((result) => {
-          console.log("Connected!");
+      connection.onreconnecting(() => setIsConnected(false));
+      connection.onreconnected(() => setIsConnected(true));
+      connection.onclose(() => console.log("Closed"));
 
-          connection.on("ReceiveMessage", (message: Message) => {
-            setMessages((m) => [...m, message]);
-          });
-        })
-        .catch((e) => console.log("Connection failed: ", e));
+      connection.start().then(() => {
+        setIsConnected(true)
+        connection.on("ReceiveMessage", (message: Message) => {
+          const newMessage = { ...message, isIn: true };
+          setMessages((m) => [...m, newMessage]);
+        });
+      });
     }
   }, [connection]);
 
@@ -53,7 +61,7 @@ const App = () => {
         console.log(e);
       }
     } else {
-      alert("No connection started");
+      throw Error("Connection not set");
     }
   };
 
@@ -63,29 +71,35 @@ const App = () => {
       toUser: toUser,
       message: message,
     };
-    setMessages((m) => [...m, chatMessage]);
+    const newMessage = { ...chatMessage, isIn: false };
+    setMessages((m) => [...m, newMessage]);
     sendToWebsocket("SendMessage", chatMessage);
   };
 
   const sendLogin = async (username: string) => {
-    sendToWebsocket("Connect", username);
-    setUser(username);
+    sendToWebsocket("Connect", username)
+      .then(() => {
+        console.log("Oi!");
+        setUser(username);
+      })
+      .catch((e) => console.error(e));
   };
 
   return (
-    <div className="App">
+    <>
+      {isConnected ? <p>Conectado</p> : <p>Reconectando</p>}
       {user ? (
         <>
           <h1>Olá, {user}!</h1>
           <MessageForm sendMessage={sendMessage} />
-          <MessageList user={user} messages={messsages} />
+          <MessageList messages={messsages} />
         </>
       ) : (
         <LoginForm sendLogin={sendLogin} />
       )}
-    </div>
+    </>
   );
 };
 
-export type { Message };
+export type { Message, MessageState };
 export default App;

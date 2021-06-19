@@ -3,10 +3,12 @@ import styled from "styled-components";
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
 
-  width: 32rem;
-  margin: 5rem auto 0 auto;
+  height: 100vh;
+
+  width: 70%;
+  margin: 0rem auto 0 auto;
 `;
 
 export const Label = styled.label`
@@ -17,7 +19,9 @@ export const Label = styled.label`
   margin: 1rem 0 1rem 0;
 `;
 
-export const Input = styled.input``;
+export const Input = styled.input`
+  height: 32px;
+`;
 
 export const LoginInput = styled.input`
   padding: 1rem 0 1rem 0;

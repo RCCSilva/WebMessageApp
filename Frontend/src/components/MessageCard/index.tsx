@@ -1,19 +1,17 @@
+import { MessageState } from "../../App";
 import * as S from "./styles";
+import MessageInCard from './components/MessageInCard'
+import MessageOutCard from './components/MessageOutCard'
 
 type Props = {
-  user: string;
-  origin: string;
-  message: string;
-};
+  message: MessageState
+}
 
-const MessageCard = ({ user, origin, message }: Props) => {
+const MessageCard = ({ message }: Props) => {
   return (
-    <S.Card isCurrentUser={user === origin}>
-      <S.Container isCurrentUser={user === origin}>
-        <S.Origin>{origin}:</S.Origin>
-        <S.Message>{message}</S.Message>
-      </S.Container>
-    </S.Card>
+    <S.Container isIn={message.isIn} data-testid='message-row'>
+      {message.isIn ? <MessageInCard message={message.message} /> : <MessageOutCard message={message.message} />}
+    </S.Container>
   );
 };
 
